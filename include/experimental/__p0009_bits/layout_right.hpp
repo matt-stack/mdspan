@@ -149,7 +149,11 @@ struct layout_right {
        size_t stride = 1;
        for(size_type r=__extents.rank(); r>0; r--) {
          if(stride != other.stride(r-1))
+#if defined(__CUDA_ARCH__) || defined(__NVCOMPILER_CUDA_ARCH__)
+           __assert_fail("Assigning layout_stride to layout_right with invalid strides.", __FILE__, __LINE__, __FUNCTION__);
+#else
            throw std::runtime_error("Assigning layout_stride to layout_right with invalid strides.");
+#endif
          stride *= __extents.extent(r-1);
        }
     }
